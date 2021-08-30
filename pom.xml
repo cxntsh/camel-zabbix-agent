@@ -3,11 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.apache.camel</groupId>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>components</artifactId>
+        <version>2.25.4</version>
+    </parent>
+
     <artifactId>camel-zabbix-agent</artifactId>
-
-    <version>2.25.4</version>
-
     <packaging>jar</packaging>
     <name>Camel :: Zabbix-agent</name>
     <description>Camel Zabbix Agent</description>
@@ -17,6 +19,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <camel.osgi.export.pkg>org.apache.camel.component.zabbix.agent.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=zabbix-agent</camel.osgi.export.service>
     </properties>
 
     <dependencies>
@@ -26,86 +30,5 @@
             <version>2.25.4</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-package-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <!-- set to true to make build fail fast if missing documentation in docs files -->
-                    <failFast>false</failFast>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>prepare</id>
-                        <goals>
-                            <goal>prepare-components</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                    <execution>
-                        <id>validate</id>
-                        <goals>
-                            <goal>validate-components</goal>
-                            <goal>prepare-spring-boot-starter</goal>
-                            <goal>prepare-spring-boot-auto-configuration</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                    <execution>
-                        <id>readme</id>
-                        <goals>
-                            <goal>update-readme</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <!-- enables the APT dependency so that it can be disabled in IDE builds -->
-        <profile>
-            <id>apt</id>
-            <activation>
-                <property>
-                    <name>!dummy.prop.to.keep.this.profile.active.even.when.other.profiles.are.active</name>
-                </property>
-            </activation>
-
-            <dependencies>
-                <!-- enable Camel APT processors -->
-                <dependency>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>apt</artifactId>
-                    <version>${project.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>validate</id>
-            <build>
-                <plugins>
-                    <!-- to validate Camel endpoints: mvn camel:validate -Pvalidate -->
-                    <plugin>
-                        <groupId>org.apache.camel</groupId>
-                        <artifactId>camel-maven-plugin</artifactId>
-                        <version>${project.version}</version>
-                        <configuration>
-                            <failOnError>false</failOnError>
-                            <includeTest>true</includeTest>
-                            <includeXml>true</includeXml>
-                            <ignoreLenientProperties>false</ignoreLenientProperties>
-                            <excludes>.*custom-exchange-formatter-context\.xml</excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
