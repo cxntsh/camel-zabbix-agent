@@ -1,5 +1,6 @@
 package org.apache.camel.component.zabbix.agent;
 
+import org.apache.camel.Exchange;
 import org.voovan.network.IoHandler;
 import org.voovan.network.IoSession;
 
@@ -7,6 +8,12 @@ import org.voovan.network.IoSession;
  * @author nantian created at 2021/8/31 17:47
  */
 public class ZabbixAgentRequestHandler implements IoHandler {
+
+    private final ZabbixAgentConsumer consumer;
+
+    public ZabbixAgentRequestHandler(ZabbixAgentConsumer consumer) {
+        this.consumer = consumer;
+    }
 
     @Override
     public Object onConnect(IoSession session) {
@@ -20,6 +27,19 @@ public class ZabbixAgentRequestHandler implements IoHandler {
 
     @Override
     public Object onReceive(IoSession session, Object obj) {
+        final Exchange exchange = consumer.getEndpoint().createExchange(obj);
+
+        try {
+            consumer.createUoW(exchange);
+            consumer.getProcessor().process(exchange);
+            return exchange.getMessage().getBody();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            consumer.doneUoW(exchange);
+        }
+
         return null;
     }
 

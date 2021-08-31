@@ -1,7 +1,5 @@
 package org.apache.camel.component.zabbix.agent;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
@@ -33,7 +31,7 @@ public class ZabbixAgentConsumer extends DefaultConsumer {
 
     protected void doStart() throws Exception {
         socket = new TcpServerSocket(configuration.getListenIp(), configuration.getListenPort(), configuration.getReadTimeout());
-        socket.handler(new ZabbixAgentRequestHandler());
+        socket.handler(new ZabbixAgentRequestHandler(this));
         socket.filterChain().add(new ZabbixAgentRequestFilter());
         socket.syncStart();
 
@@ -44,32 +42,5 @@ public class ZabbixAgentConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         socket.close();
         super.doStop();
-    }
-
-    /**
-     * 产生 Exchange 并且处理
-     *
-     * @param exchange Exchange
-     */
-    void processExchange(final Exchange exchange) {
-        boolean sync = true;
-        try {
-            sync = getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    if (exchange.getException() != null) {
-                        getExceptionHandler().handleException("Error processing exchange.", exchange, exchange.getException());
-                    }
-                }
-            });
-        } catch (Throwable e) {
-            exchange.setException(e);
-        }
-
-        if (sync) {
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange.", exchange, exchange.getException());
-            }
-        }
     }
 }

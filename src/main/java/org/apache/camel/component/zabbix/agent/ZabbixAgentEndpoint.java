@@ -1,9 +1,6 @@
 package org.apache.camel.component.zabbix.agent;
 
-import org.apache.camel.AsyncEndpoint;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
+import org.apache.camel.*;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -53,6 +50,18 @@ public class ZabbixAgentEndpoint extends DefaultEndpoint {
         ZabbixAgentConsumer zbxConsumer = new ZabbixAgentConsumer(this, processor, configuration);
         configureConsumer(zbxConsumer);
         return zbxConsumer;
+    }
+
+    /**
+     * Zabbix Server Request Item Key
+     *
+     * @param itemKey keyStr
+     * @return Exchange
+     */
+    public Exchange createExchange(Object itemKey) {
+        Exchange exchange = createExchange();
+        exchange.getIn().setBody(itemKey);
+        return exchange;
     }
 
     @Override
