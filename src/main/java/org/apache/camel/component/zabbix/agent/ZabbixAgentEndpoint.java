@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
  */
 
 @UriEndpoint(firstVersion = "1.0.0",
-        scheme = "zabbix",
-        title = "zabbix-agent",
-        syntax = "zabbix:agent:host:port",
+        scheme = "zabbix-agent",
+        title = "Zabbix Agent",
+        syntax = "zabbix-agent:tcp:host:port",
         consumerClass = ZabbixAgentConsumer.class,
-        label = "zabbix,agent")
+        label = "zabbix-agent")
 public class ZabbixAgentEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZabbixAgentEndpoint.class);
@@ -37,7 +37,7 @@ public class ZabbixAgentEndpoint extends DefaultEndpoint {
     @Override
     protected String createEndpointUri() {
         ObjectHelper.notNull(configuration, "configuration");
-        return "zabbix:agent://" + getConfiguration().getListenIp() + ":" + getConfiguration().getListenPort();
+        return "zabbix-agent:tcp://" + getConfiguration().getListenIp() + ":" + getConfiguration().getListenPort();
     }
 
     @Override
@@ -60,7 +60,16 @@ public class ZabbixAgentEndpoint extends DefaultEndpoint {
      */
     public Exchange createExchange(Object itemKey) {
         Exchange exchange = createExchange();
+
+        ZabbixItem item = new ZabbixItem(itemKey.toString());
+
+        for (int i = 0; i < item.getArgumentCount(); i++) {
+            exchange.getMessage().setHeader("args-" + (i + 1), item.getArgument(i + 1));
+        }
+        exchange.getMessage().setHeader("key", item.getKeyId());
+
         exchange.getIn().setBody(itemKey);
+
         return exchange;
     }
 

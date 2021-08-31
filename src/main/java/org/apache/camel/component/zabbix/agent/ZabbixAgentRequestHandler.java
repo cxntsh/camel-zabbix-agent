@@ -1,12 +1,16 @@
 package org.apache.camel.component.zabbix.agent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.voovan.network.IoHandler;
 import org.voovan.network.IoSession;
 
 /**
  * @author nantian created at 2021/8/31 17:47
  */
+@Slf4j
 public class ZabbixAgentRequestHandler implements IoHandler {
 
     private final ZabbixAgentConsumer consumer;
@@ -33,7 +37,6 @@ public class ZabbixAgentRequestHandler implements IoHandler {
             consumer.createUoW(exchange);
             consumer.getProcessor().process(exchange);
             return exchange.getMessage().getBody();
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -45,7 +48,7 @@ public class ZabbixAgentRequestHandler implements IoHandler {
 
     @Override
     public void onSent(IoSession session, Object obj) {
-
+        log.debug("message: [ {} ] on sent.", obj);
     }
 
     @Override
