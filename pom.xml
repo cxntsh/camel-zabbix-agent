@@ -29,6 +29,11 @@
             <artifactId>camel-core</artifactId>
             <version>2.25.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.voovan</groupId>
+            <artifactId>voovan-framework</artifactId>
+            <version>4.3.8</version>
+        </dependency>
     </dependencies>
 
 </project>
