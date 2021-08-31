@@ -1,7 +1,9 @@
 package org.apache.camel.component.zabbix.agent;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.spi.UriPath;
 
 import java.net.URI;
 import java.util.Map;
@@ -13,10 +15,12 @@ import java.util.Map;
 @UriParams
 public class ZabbixAgentConfiguration {
 
-    @UriParam(defaultValue = "" + 10050, description = "zabbix agent listen port")
+    @UriPath(defaultValue = "" + 10050, description = "zabbix agent listener port")
+    @Metadata(required = "true")
     private int listenPort;
 
-    @UriParam(defaultValue = "0.0.0.0", description = "zabbix agent listen ip")
+    @UriPath(defaultValue = "0.0.0.0", description = "zabbix agent listener ip")
+    @Metadata(required = "true")
     private String listenIp;
 
     @UriParam(defaultValue = "" + 3000, description = "超时时间, 单位: 毫秒")

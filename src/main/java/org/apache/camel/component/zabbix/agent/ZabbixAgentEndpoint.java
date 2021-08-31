@@ -1,5 +1,6 @@
 package org.apache.camel.component.zabbix.agent;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
